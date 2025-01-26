@@ -16,6 +16,8 @@
  * Output: FILE pointer for above files
  * Return Value: e_success or e_failure, on file errors
  */
+
+
 Status open_files(EncodeInfo *encInfo)
 {
     // Src Image file

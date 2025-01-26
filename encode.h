@@ -33,7 +33,7 @@ typedef struct _EncodeInfo
     char *stego_image_fname;
     FILE *fptr_stego_image;
 
-} EncodeInfo;
+}EncodeInfo;
 
 
 /* Encoding function prototype */
