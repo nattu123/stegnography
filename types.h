@@ -1,5 +1,5 @@
 #ifndef TYPES_H
-#define TYPES_h
+#define TYPES_H
 
 typedef unsigned int uint;
 
@@ -14,6 +14,6 @@ typedef enum
     e_encode,
     e_decode,
     e_unsupported
-}operationType;
+}OperationType;
 
 #endif

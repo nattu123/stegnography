@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "encode.h": "c"
+        "encode.h": "c",
+        "types.h": "c"
     }
 }
