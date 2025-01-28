@@ -11,6 +11,40 @@ OperationType  check_operation_type(char **argv)
     else                                return e_unsupported;
 }
 
+Status open_encode_file(EncodeInfo *encinfo)
+{
+    static int opencount =0;
+    if(opencount == 0)
+    {
+        opencount++;
+        // source image file 
+        encinfo->fptr_src_img =fopen(encinfo->src_image_fname,"r");
+        // error handling 
+        if(encinfo->fptr_src_img==NULL)
+        {
+            perror("fopen");
+            fprintf(stderr,"error unablle to open file %s\n",encinfo->src_image_fname);
+            return e_failure;
+        }
+        else
+        {
+            printf("\n Opened the file %s\n",encinfo->src_image_fname);
+        }
+        // SECRET FILE 
+        encinfo->fptr_secret = fopen(encinfo->secret_fname,"r");
+        if(encinfo->fptr_secret==NULL)
+        {
+            perror("fopen");
+            fprintf(stderr,"error unablle to open file %s\n",encinfo->secret_fname);
+            return e_failure;
+        }
+        else
+        {
+            printf("opened %s\n",encinfo->secret_fname);
+        }
+    }
+}
+
 Status read_and_validate_encode_args(int argc,char **argv,EncodeInfo *encodeinfo)
 {
     
@@ -48,3 +82,13 @@ Status read_and_validate_encode_args(int argc,char **argv,EncodeInfo *encodeinfo
     return e_success;
 
 } 
+
+Status do_encoding(EncodeInfo *encodeinfo)
+{
+    printf("Opening input file ");
+    if(open_encode_file(encodeinfo)==e_success)
+    {
+
+    }
+    
+}
