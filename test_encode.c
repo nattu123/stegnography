@@ -11,9 +11,10 @@ int main(int argc,char **argv)
             EncodeInfo encodeinfo;
             if(read_and_validate_encode_args(argc,argv,&encodeinfo)==e_success)
             {
-                        
+                
             }
         }
     }
+
 
 }

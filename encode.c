@@ -23,8 +23,9 @@ Status read_and_validate_encode_args(int argc,char **argv,EncodeInfo *encodeinfo
             printf("\nsource image should be in .bmp format\n");
             return e_failure;
         }
-
-        strcpy(encodeinfo->ext_secret_file,strstr(argv[3],"."));
+        
+        char *p = strstr(argv[3],".");
+        if(p) strcpy(encodeinfo->ext_secret_file,p);
         if(strcmp(encodeinfo->ext_secret_file,".txt")==0)
         {   
             encodeinfo->secret_fname = argv[3];
@@ -32,6 +33,7 @@ Status read_and_validate_encode_args(int argc,char **argv,EncodeInfo *encodeinfo
         else
         {
             printf("The secret file shoul be in .txt format ");
+            return e_failure;
         }
     
         if(strstr(argv[4],".") && strcmp(strstr(argv[4],"."),".bmp")==0)
@@ -43,5 +45,6 @@ Status read_and_validate_encode_args(int argc,char **argv,EncodeInfo *encodeinfo
             printf("\n Output image should be in .bmp format\n");
             return e_failure;
         }
+    return e_success;
 
 } 
