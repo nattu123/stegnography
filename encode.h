@@ -14,6 +14,10 @@ typedef struct
     //SECRET FILE INFO 
     char *secret_fname;
     char ext_secret_file[max_file_suffix];
+
+    //OUTPUT FILE INFO 
+    char *stego_fname;
+    FILE *fptr_stego;
 }EncodeInfo;    
 
 OperationType check_operation_type(char **argv); // to check whether to encode or decode
