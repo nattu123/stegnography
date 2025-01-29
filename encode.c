@@ -99,9 +99,44 @@ Status do_encoding(EncodeInfo *encodeinfo)
         printf("## Encoding started \n");
         printf(" Getting the file size of secret file : \n ");
         encodeinfo->size_secret_file = get_secret_file_size(encodeinfo->fptr_secret);
-        printf("size of secret file %ld \n",encodeinfo->size_secret_file);
-
+        if(encodeinfo->size_secret_file)
+        {
+            printf("INFO : File not empty \n");
+            printf("INFO : Checking for capacity of %s, to handle %s\n",encodeinfo->src_image_fname,encodeinfo->secret_fname);
+            encodeinfo->image_capacity =  get_image_size_for_bmp(encodeinfo->fptr_src_img);
+            if(check_capacity(encodeinfo)==e_success)
+            {
+                printf("Capacity of %s is enough to store %s",encodeinfo->src_image_fname,encodeinfo->secret_fname);
+            }
+        }
     }
     return e_success;
     
+}
+
+Status check_capacity(EncodeInfo *encInfo)
+{
+    if(encInfo->image_capacity>(14+encInfo->size_secret_file)*8)
+    {
+        return e_success;
+    }
+    return e_failure;
+}
+
+uint get_image_size_for_bmp(FILE *fptr_image)
+{
+    uint width, height;
+    // Seek to 18th byte
+    fseek(fptr_image, 18, SEEK_SET);
+
+    // Read the width (an int)
+    fread(&width, sizeof(int), 1, fptr_image);
+    printf("width = %u\n", width);
+
+    // Read the height (an int)
+    fread(&height, sizeof(int), 1, fptr_image);
+    printf("height = %u\n", height);
+
+    // Return image capacity
+    return width * height * 3;
 }

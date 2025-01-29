@@ -28,4 +28,7 @@ OperationType check_operation_type(char **argv); // to check whether to encode o
 Status read_and_validate_encode_args(int argc,char **argv,EncodeInfo *encodeinfo); 
 Status do_encoding(EncodeInfo *encodeinfo);
 long get_secret_file_size(FILE *fptr);
+Status check_capacity(EncodeInfo *encInfo); // check capacity
+uint get_image_size_for_bmp(FILE *fptr_image); // image size of the bmp
+
 #endif
