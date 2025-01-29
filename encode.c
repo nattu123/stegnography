@@ -23,32 +23,52 @@ long get_secret_file_size(FILE *fptr)
 
 Status open_encode_file(EncodeInfo *encinfo)
 {
+    static int opencount =0;
+    if(opencount==0)
+    {
+        opencount++;
 
-
-    // source image file 
-    encinfo->fptr_src_img =fopen(encinfo->src_image_fname,"r");
-    // error handling 
-    if(encinfo->fptr_src_img==NULL)
-    {
-        perror("fopen");
-        fprintf(stderr,"error unablle to open file %s\n",encinfo->src_image_fname);
-        return e_failure;
+        // source image file 
+        encinfo->fptr_src_img =fopen(encinfo->src_image_fname,"r");
+        // error handling 
+        if(encinfo->fptr_src_img==NULL)
+        {
+            perror("fopen");
+            fprintf(stderr,"error unablle to open file %s\n",encinfo->src_image_fname);
+            return e_failure;
+        }
+        else
+        {
+            printf("\n Opened the file %s\n",encinfo->src_image_fname);
+        }
+        // SECRET FILE 
+        encinfo->fptr_secret = fopen(encinfo->secret_fname,"r");
+        if(encinfo->fptr_secret==NULL)
+        {
+            perror("fopen");
+            fprintf(stderr,"error unablle to open file %s\n",encinfo->secret_fname);
+            return e_failure;
+        }
+        else
+        {
+            printf("opened %s\n",encinfo->secret_fname);
+        }
     }
-    else
+    else 
     {
-        printf("\n Opened the file %s\n",encinfo->src_image_fname);
-    }
-    // SECRET FILE 
-    encinfo->fptr_secret = fopen(encinfo->secret_fname,"r");
-    if(encinfo->fptr_secret==NULL)
-    {
-        perror("fopen");
-        fprintf(stderr,"error unablle to open file %s\n",encinfo->secret_fname);
-        return e_failure;
-    }
-    else
-    {
-        printf("opened %s\n",encinfo->secret_fname);
+        // for stego image file 
+        encinfo->fptr_stego = fopen(encinfo->stego_fname,"w");
+        // Error handling 
+        if(encinfo->fptr_stego==NULL)
+        {
+            perror("fopen : ");
+            fprintf(stderr,"cannot open file %s\n",encinfo->stego_fname);
+            return e_failure;
+        }
+        else
+        {
+            printf("opened output file \n");
+        }
     }
     return e_success;
 }
@@ -107,6 +127,14 @@ Status do_encoding(EncodeInfo *encodeinfo)
             if(check_capacity(encodeinfo)==e_success)
             {
                 printf("Capacity of %s is enough to store %s",encodeinfo->src_image_fname,encodeinfo->secret_fname);
+                printf(" opening output file : \n");
+                if(open_encode_file(encodeinfo)==e_failure)
+                {
+                    fprintf(stderr,"Error in opening output file \n");
+                    return e_failure;
+                }
+
+                
             }
         }
     }
