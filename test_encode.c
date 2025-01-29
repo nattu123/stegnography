@@ -23,7 +23,7 @@ int main(int argc,char **argv)
             }
             else 
             {
-                fprintf(stderr,"failed in validation of encode args");
+                fprintf(stderr,"failed in validation of encode args\n");
                 return 1;
             }
         }

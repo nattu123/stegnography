@@ -11,38 +11,46 @@ OperationType  check_operation_type(char **argv)
     else                                return e_unsupported;
 }
 
+long get_secret_file_size(FILE *fptr)
+{
+  long size;
+  fseek(fptr,0,SEEK_END);
+  size = ftell(fptr);
+  rewind(fptr);
+  return size;
+
+}
+
 Status open_encode_file(EncodeInfo *encinfo)
 {
-    static int opencount =0;
-    if(opencount == 0)
+
+
+    // source image file 
+    encinfo->fptr_src_img =fopen(encinfo->src_image_fname,"r");
+    // error handling 
+    if(encinfo->fptr_src_img==NULL)
     {
-        opencount++;
-        // source image file 
-        encinfo->fptr_src_img =fopen(encinfo->src_image_fname,"r");
-        // error handling 
-        if(encinfo->fptr_src_img==NULL)
-        {
-            perror("fopen");
-            fprintf(stderr,"error unablle to open file %s\n",encinfo->src_image_fname);
-            return e_failure;
-        }
-        else
-        {
-            printf("\n Opened the file %s\n",encinfo->src_image_fname);
-        }
-        // SECRET FILE 
-        encinfo->fptr_secret = fopen(encinfo->secret_fname,"r");
-        if(encinfo->fptr_secret==NULL)
-        {
-            perror("fopen");
-            fprintf(stderr,"error unablle to open file %s\n",encinfo->secret_fname);
-            return e_failure;
-        }
-        else
-        {
-            printf("opened %s\n",encinfo->secret_fname);
-        }
+        perror("fopen");
+        fprintf(stderr,"error unablle to open file %s\n",encinfo->src_image_fname);
+        return e_failure;
     }
+    else
+    {
+        printf("\n Opened the file %s\n",encinfo->src_image_fname);
+    }
+    // SECRET FILE 
+    encinfo->fptr_secret = fopen(encinfo->secret_fname,"r");
+    if(encinfo->fptr_secret==NULL)
+    {
+        perror("fopen");
+        fprintf(stderr,"error unablle to open file %s\n",encinfo->secret_fname);
+        return e_failure;
+    }
+    else
+    {
+        printf("opened %s\n",encinfo->secret_fname);
+    }
+    return e_success;
 }
 
 Status read_and_validate_encode_args(int argc,char **argv,EncodeInfo *encodeinfo)
@@ -85,10 +93,15 @@ Status read_and_validate_encode_args(int argc,char **argv,EncodeInfo *encodeinfo
 
 Status do_encoding(EncodeInfo *encodeinfo)
 {
-    printf("Opening input file ");
+    printf("Opening input file \n");
     if(open_encode_file(encodeinfo)==e_success)
     {
+        printf("## Encoding started \n");
+        printf(" Getting the file size of secret file : \n ");
+        encodeinfo->size_secret_file = get_secret_file_size(encodeinfo->fptr_secret);
+        printf("size of secret file %ld \n",encodeinfo->size_secret_file);
 
     }
+    return e_success;
     
 }

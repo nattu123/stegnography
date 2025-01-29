@@ -15,12 +15,17 @@ typedef struct
     char *secret_fname;
     char ext_secret_file[max_file_suffix];
     FILE *fptr_secret;
+    long size_secret_file;
+
     //OUTPUT FILE INFO 
     char *stego_fname;
     FILE *fptr_stego;
+
+
 }EncodeInfo;    
 
 OperationType check_operation_type(char **argv); // to check whether to encode or decode
 Status read_and_validate_encode_args(int argc,char **argv,EncodeInfo *encodeinfo); 
 Status do_encoding(EncodeInfo *encodeinfo);
+long get_secret_file_size(FILE *fptr);
 #endif
