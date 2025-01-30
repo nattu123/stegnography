@@ -139,10 +139,10 @@ Status do_encoding(EncodeInfo *encodeinfo)
                 if(copy_bmp_header(encodeinfo->fptr_src_img,encodeinfo->fptr_stego))
                 {
                     printf("INFO : COPIED BMP HEADDER \n");
-                    printf("Encoding secret File extension");
-                    if(encode_secret_file_extn(encodeinfo)==e_success)
+                    printf("Encoding Magic string\n");
+                    if(encode_magic_string(encodeinfo)==e_success)
                     {
-                        printf("Encoded secret file extension ");
+                        printf("Magic string encoded \n");
                     }
 
                 }
@@ -190,7 +190,38 @@ Status copy_bmp_header(FILE *fptr_src_image,FILE *fptr_stego)
     fwrite(buffer,1,54,fptr_stego);
 }
 
+Status encode_magic_string(EncodeInfo *encodeinfo)
+{
+    for(int i=0;i<2;i++)
+    {
+        fread(encodeinfo->image_data,1,MAX_IMAGE_BUFF_SIZE,encodeinfo->fptr_src_img);
+        encodeinfo->secret_data[i] = *(MAGIC_STRING+i);
+        if(encode_byte_to_lsb(encodeinfo->secret_data[i],encodeinfo->image_data)==e_success)
+        {
+        }
+    }
+    printf("lsb encoding of magic string completed\n");
+}
+
 Status encode_secret_file_extn(EncodeInfo *encodeinfo)
 {
+    
+}
 
+Status encode_byte_to_lsb(char data,char *image_buffer)
+{
+    unsigned char mask = 0x80;
+    for(int i=0;i<MAX_IMAGE_BUFF_SIZE;i++)
+    {
+        if(data&mask)
+        {
+            image_buffer[i] = image_buffer[i] | 0x01;
+        }
+        else 
+        {
+            image_buffer[i] = image_buffer[i] & (~0x01) ;
+        }
+        mask >>=1 ;
+    }
+    return e_success;
 }

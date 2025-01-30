@@ -10,12 +10,15 @@ typedef struct
     FILE *fptr_src_img;
     uint image_capacity;
     uint bits_per_pixel;
+    char image_data[MAX_IMAGE_BUFF_SIZE];
+
 
     //SECRET FILE INFO 
     char *secret_fname;
     char ext_secret_file[max_file_suffix];
     FILE *fptr_secret;
     long size_secret_file;
+    char secret_data[MAX_SECRET_BUFF_SIZE];
 
     //OUTPUT FILE INFO 
     char *stego_fname;
@@ -31,5 +34,8 @@ long get_secret_file_size(FILE *fptr);
 Status check_capacity(EncodeInfo *encInfo); // check capacity
 uint get_image_size_for_bmp(FILE *fptr_image); // image size of the bmp
 Status copy_bmp_header(FILE *fptr_src_image,FILE *fptr_stego);
+Status encode_secret_file_extn(EncodeInfo *encodeinfo);
+Status encode_magic_string(EncodeInfo *encodeinfo); 
+Status encode_byte_to_lsb(char data,char *image_buffer);
 
 #endif
