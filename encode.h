@@ -30,5 +30,6 @@ Status do_encoding(EncodeInfo *encodeinfo);
 long get_secret_file_size(FILE *fptr);
 Status check_capacity(EncodeInfo *encInfo); // check capacity
 uint get_image_size_for_bmp(FILE *fptr_image); // image size of the bmp
+Status copy_bmp_header(FILE *fptr_src_image,FILE *fptr_stego);
 
 #endif

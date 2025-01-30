@@ -134,6 +134,19 @@ Status do_encoding(EncodeInfo *encodeinfo)
                     return e_failure;
                 }
 
+                /// copying image header 
+                printf("INFO : copying imahge header \n");
+                if(copy_bmp_header(encodeinfo->fptr_src_img,encodeinfo->fptr_stego))
+                {
+                    printf("INFO : COPIED BMP HEADDER \n");
+                    printf("Encoding secret File extension");
+                    if(encode_secret_file_extn(encodeinfo)==e_success)
+                    {
+                        printf("Encoded secret file extension ");
+                    }
+
+                }
+
                 
             }
         }
@@ -164,7 +177,20 @@ uint get_image_size_for_bmp(FILE *fptr_image)
     // Read the height (an int)
     fread(&height, sizeof(int), 1, fptr_image);
     printf("height = %u\n", height);
+    rewind(fptr_image);
 
     // Return image capacity
     return width * height * 3;
+}
+
+Status copy_bmp_header(FILE *fptr_src_image,FILE *fptr_stego)
+{
+    char buffer[54];
+    fread(buffer,1,54,fptr_src_image);
+    fwrite(buffer,1,54,fptr_stego);
+}
+
+Status encode_secret_file_extn(EncodeInfo *encodeinfo)
+{
+
 }
