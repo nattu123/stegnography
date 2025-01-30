@@ -143,6 +143,11 @@ Status do_encoding(EncodeInfo *encodeinfo)
                     if(encode_magic_string(encodeinfo)==e_success)
                     {
                         printf("Magic string encoded \n");
+                        printf("Encoding secret file extension \n");
+                        if(encode_secret_file_extn(encodeinfo)==e_success)
+                        {
+                            printf(" sectret file extension encoded\n");
+                        }
                     }
 
                 }
@@ -195,18 +200,32 @@ Status encode_magic_string(EncodeInfo *encodeinfo)
     for(int i=0;i<2;i++)
     {
         fread(encodeinfo->image_data,1,MAX_IMAGE_BUFF_SIZE,encodeinfo->fptr_src_img);
-        encodeinfo->secret_data[i] = *(MAGIC_STRING+i);
-        if(encode_byte_to_lsb(encodeinfo->secret_data[i],encodeinfo->image_data)==e_success)
+        encodeinfo->secret_data[0] = *(MAGIC_STRING+i);
+        if(encode_byte_to_lsb(encodeinfo->secret_data[0],encodeinfo->image_data)==e_success)
         {
+            fwrite(encodeinfo->image_data,1,MAX_IMAGE_BUFF_SIZE,encodeinfo->fptr_stego);
         }
+
     }
     printf("lsb encoding of magic string completed\n");
 }
 
 Status encode_secret_file_extn(EncodeInfo *encodeinfo)
 {
-    
+    for(int i=0;i<max_file_suffix;i++)    
+    {
+        fread(encodeinfo->image_data,1,MAX_IMAGE_BUFF_SIZE,encodeinfo->fptr_src_img);
+        printf("-------%ld-------" ,ftell(encodeinfo->fptr_src_img));
+        encodeinfo->secret_data[0]= encodeinfo->ext_secret_file[i];
+        if(encode_byte_to_lsb(encodeinfo->secret_data[0],encodeinfo->image_data)==e_success)
+        {
+            fwrite(encodeinfo->image_data,1,MAX_IMAGE_BUFF_SIZE,encodeinfo->fptr_stego);
+
+        }
+    }
+    return e_success;
 }
+
 
 Status encode_byte_to_lsb(char data,char *image_buffer)
 {
