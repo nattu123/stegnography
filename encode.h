@@ -34,6 +34,7 @@ long get_secret_file_size(FILE *fptr);
 Status check_capacity(EncodeInfo *encInfo); // check capacity
 uint get_image_size_for_bmp(FILE *fptr_image); // image size of the bmp
 Status copy_bmp_header(FILE *fptr_src_image,FILE *fptr_stego);
+Status encode_secret_file_extn_size(EncodeInfo *encodeinfo);
 Status encode_secret_file_extn(EncodeInfo *encodeinfo);
 Status encode_magic_string(EncodeInfo *encodeinfo); 
 Status encode_byte_to_lsb(char data,char *image_buffer);
