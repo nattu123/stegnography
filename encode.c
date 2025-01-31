@@ -28,7 +28,7 @@ Status open_encode_file(EncodeInfo *encinfo)
         opencount++;
 
         // source image file 
-        encinfo->fptr_src_img =fopen(encinfo->src_image_fname,"r");
+        encinfo->fptr_src_img =fopen(encinfo->src_image_fname,"rb");
         // error handling 
         if(encinfo->fptr_src_img==NULL)
         {
@@ -41,7 +41,7 @@ Status open_encode_file(EncodeInfo *encinfo)
             printf("\n Opened the file %s\n",encinfo->src_image_fname);
         }
         // SECRET FILE 
-        encinfo->fptr_secret = fopen(encinfo->secret_fname,"r");
+        encinfo->fptr_secret = fopen(encinfo->secret_fname,"rb");
         if(encinfo->fptr_secret==NULL)
         {
             perror("fopen");
@@ -56,7 +56,7 @@ Status open_encode_file(EncodeInfo *encinfo)
     else 
     {
         // for stego image file 
-        encinfo->fptr_stego = fopen(encinfo->stego_fname,"w");
+        encinfo->fptr_stego = fopen(encinfo->stego_fname,"wb");
         // Error handling 
         if(encinfo->fptr_stego==NULL)
         {
