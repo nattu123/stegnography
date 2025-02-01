@@ -38,5 +38,8 @@ Status encode_secret_file_extn_size(EncodeInfo *encodeinfo);
 Status encode_secret_file_extn(EncodeInfo *encodeinfo);
 Status encode_magic_string(EncodeInfo *encodeinfo); 
 Status encode_byte_to_lsb(char data,char *image_buffer);
+Status encode_secret_file_size(EncodeInfo *encodeinfo);
+Status encode_secret_file(EncodeInfo *encode);
+Status copy_remaining_data(EncodeInfo *encode);
 
 #endif

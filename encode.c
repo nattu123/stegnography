@@ -139,6 +139,27 @@ Status do_encoding(EncodeInfo *encodeinfo)
                         if(encode_secret_file_extn_size(encodeinfo)==e_success)
                         {
                             printf(" sectret file extension size encoded\n");
+                            printf("encodinng secret file extension \n");
+                            if(encode_secret_file_extn(encodeinfo)==e_success)
+                            {
+                                printf("encoded secret file extension \n");
+                                printf("encoding secret file size \n");
+                                if(encode_secret_file_size(encodeinfo)==e_success)
+                                {
+                                    printf("Encoded secret file size\n");
+                                    printf("encoding secret file \n");
+                                    if(encode_secret_file(encodeinfo)==e_success)
+                                    {
+                                        printf("Encoded secret file \n");
+                                        printf("copying remaining data \n");
+                                        if(copy_remaining_data(encodeinfo)==e_success)
+                                        {
+                                            printf("copied remaining data \n");
+                                        }
+
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -199,6 +220,7 @@ Status encode_magic_string(EncodeInfo *encodeinfo)
 
     }
     printf("lsb encoding of magic string completed\n");
+    return e_success;
 }
 
 Status encode_secret_file_extn_size(EncodeInfo *encodeinfo)
@@ -211,7 +233,6 @@ Status encode_secret_file_extn_size(EncodeInfo *encodeinfo)
     for(int i=0;i<MAX_IMAGE_BUFF_SIZE*sizeof(int);i++)
     {
         fread(ch,sizeof(char),1,encodeinfo->fptr_src_img);
-        printf("--%ld--",ftell(encodeinfo->fptr_src_img));
         if(mask & len)
         {
             ch[0] = ch[0] | 0x01 ;
@@ -226,26 +247,49 @@ Status encode_secret_file_extn_size(EncodeInfo *encodeinfo)
     return e_success;
 }
 
-// Status encode_secret_file_extn(EncodeInfo *encodeinfo)
-// {
-//     for(int i=0;i<max_file_suffix;i++)    
-//     {
+Status encode_secret_file_size(EncodeInfo *encodeinfo)
+{
+    uint mask = 0x80000000;
+    char ch[1];
+    for(int i=0;i<MAX_IMAGE_BUFF_SIZE*sizeof(long);i++)
+    {
+        fread(ch,sizeof(char),1,encodeinfo->fptr_src_img);
+        if(mask & encodeinfo->size_secret_file)
+        {
+            ch[0] = ch[0] | (0x01);
+        }
+        else
+        {
+            ch[0] = ch[0] & (~(0x01));
+        }
+        fwrite(ch,sizeof(char),1,encodeinfo->fptr_stego);
+        mask>>=1;
+    }
+    return e_success;
+}
 
-//         fread(encodeinfo->image_data,sizeof(char),MAX_IMAGE_BUFF_SIZE,encodeinfo->fptr_src_img);
-//         if(ferror(encodeinfo->fptr_src_img))
-//         {
-//             printf(" error \n");
-//         }
-//         printf("-------%ld-------" ,ftell(encodeinfo->fptr_src_img));
+Status encode_secret_file_extn(EncodeInfo *encodeinfo)
+{
+    uint len ;
+    for(len=0;(len<max_file_suffix)&&(encodeinfo->ext_secret_file[len]!='\0');len++);
+
+    for(int i=0;i<len;i++)    
+    {
+
+        fread(encodeinfo->image_data,sizeof(char),MAX_IMAGE_BUFF_SIZE,encodeinfo->fptr_src_img);
+        if(ferror(encodeinfo->fptr_src_img))
+        {
+            printf(" error \n");
+        }
         
-//         if(encode_byte_to_lsb(encodeinfo->ext_secret_file[i],encodeinfo->image_data)==e_success)
-//         {
-//             fwrite(encodeinfo->image_data,1,MAX_IMAGE_BUFF_SIZE,encodeinfo->fptr_stego);
+        if(encode_byte_to_lsb(encodeinfo->ext_secret_file[i],encodeinfo->image_data)==e_success)
+        {
+            fwrite(encodeinfo->image_data,1,MAX_IMAGE_BUFF_SIZE,encodeinfo->fptr_stego);
 
-//         }
-//     }
-//     return e_success;
-// }
+        }
+    }
+    return e_success;
+}
 
 
 Status encode_byte_to_lsb(char data,char *image_buffer)
@@ -262,6 +306,30 @@ Status encode_byte_to_lsb(char data,char *image_buffer)
             image_buffer[i] = image_buffer[i] & (~0x01) ;
         }
         mask >>=1 ;
+    }
+    return e_success;
+}
+
+Status encode_secret_file(EncodeInfo *encode)
+{
+    char ch;
+    for(int i=0;i<encode->size_secret_file;i++)
+    {
+        ch = fgetc(encode->fptr_secret);
+        fread(encode->image_data,sizeof(char),MAX_IMAGE_BUFF_SIZE,encode->fptr_src_img);
+        encode_byte_to_lsb(ch,encode->image_data);
+        fwrite(encode->image_data,sizeof(char),MAX_IMAGE_BUFF_SIZE,encode->fptr_stego);
+    }
+    return e_success;
+}
+
+Status copy_remaining_data(EncodeInfo *encode)
+{
+    char ch[1];
+    while(fread(ch,sizeof(char),MAX_SECRET_BUFF_SIZE,encode->fptr_src_img) > 0)   
+    {
+        
+        fwrite(ch,sizeof(char),MAX_SECRET_BUFF_SIZE,encode->fptr_stego);
     }
     return e_success;
 }
