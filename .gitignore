@@ -1,4 +1,12 @@
-*.exe
-*.out
-*.bmp 
-!beautiful.bmp
+
+/*
+!beatiful.bmp
+!common.h
+!common.c
+!decode.h
+!decode.c
+!encode.c
+!encode.h
+!RAEDME.md
+!teste_encode.c
+!types.h
