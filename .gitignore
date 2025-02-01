@@ -1,2 +1,4 @@
 *.exe
 *.out
+*.bmp 
+!beautiful.bmp
