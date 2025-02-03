@@ -4,6 +4,17 @@
 #include <stdio.h>
 #include <string.h>
 
+Status open_stego_file(DecodeInfo *decode)
+{
+    decode->fptr_stego = fopen(decode->stego_image_name,"rb");
+    if(decode->fptr_stego== NULL)
+    {
+        perror("fopen ");
+        return e_failure;
+    }
+    return e_success;
+}
+
 Status read_and_validate_decode_args(int argc,char **argv,DecodeInfo *decode)
 {
     if(argc >=3)
@@ -29,7 +40,7 @@ Status read_and_validate_decode_args(int argc,char **argv,DecodeInfo *decode)
         char *ext;
         if(ext = strstr(argv[3],"."))
         {
-            decode->output_image_name = argv[3];
+            decode->output_file_name = argv[3];
         }
         else
         {
@@ -38,4 +49,15 @@ Status read_and_validate_decode_args(int argc,char **argv,DecodeInfo *decode)
         }
     }
     return e_success;
+}
+
+Status do_decoding(DecodeInfo *decode)
+{
+    printf("## Deocding started \n");
+    printf("Opening stego file \n");
+    if(open_stego_file(decode)==e_success)
+    {
+        printf("opened stego file ");
+        
+    }
 }

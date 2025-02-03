@@ -34,6 +34,11 @@ int main(int argc,char **argv)
             if(read_and_validate_decode_args(argc,argv,&decode)== e_success)
             {
                 printf("Validation of decode args succesfull \n");
+                if(do_decoding(&decode)==e_success)
+                {
+                    printf("decoding finished output is stroed in %s\n",decode.output_file_name);
+                    
+                }
             }   
         }
         else 
