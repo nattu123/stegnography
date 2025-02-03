@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include "types.h"
 #include "encode.h"
+#include "decode.h"
 
 int main(int argc,char **argv)
 {
-    if (argc ==5)
+    if (argc <=5)
     {
         if(check_operation_type(argv) == e_encode)
         {
@@ -29,13 +30,16 @@ int main(int argc,char **argv)
         }
         else if(check_operation_type(argv) == e_decode)
         {
-
+            DecodeInfo decode;
+            if(read_and_validate_decode_args(argc,argv,&decode)== e_success)
+            {
+                printf("Validation of decode args succesfull \n");
+            }   
         }
         else 
         {
             printf("\n --------Invalid option--------- \n ");
             return 1;
         }
-
     }
 }
