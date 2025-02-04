@@ -15,6 +15,8 @@ typedef struct
     char *output_file_name;
     FILE *fptr_output;
     char magic_string[3];
+    unsigned int secret_file_ext_size;
+    char secret_file_ext[5];
 
 }DecodeInfo;
 
@@ -24,6 +26,6 @@ Status open_stego_file(DecodeInfo *decode);
 Status decode_magic_string(DecodeInfo *decode);
 unsigned char decode_from_lsb(char *image);
 Status decode_secret_ext_size(DecodeInfo *decode);
-
+Status decode_secret_ext(DecodeInfo *decode);
 
 #endif 

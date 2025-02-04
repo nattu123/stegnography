@@ -64,7 +64,16 @@ Status do_decoding(DecodeInfo *decode)
         {
             printf("magic string decoded \n");
             printf("starting decode of file extension :\n" );
-            
+            if(decode_secret_ext_size(decode)==e_success)
+            {
+                printf("extension decoded \n");
+                printf("starting decoding of secret file \n");
+                if(decode_secret_ext(decode)==e_success)
+                {
+                    printf("decoded secret file exxtension \n");
+                }
+                
+            }
         
         }
         
@@ -88,7 +97,29 @@ Status decode_magic_string(DecodeInfo *decode)
 
 Status decode_secret_ext_size(DecodeInfo *decode)
 {
-    
+    unsigned int mask = 0x80000000;
+    unsigned char ch[1];
+    decode->secret_file_ext_size = 0;
+    for(int i =0;i<sizeof(int)*MAX_IMAGE_BUFF_SIZE;i++)
+    {
+        fread(ch,1,1,decode->fptr_stego);
+        if(ch[0]& 0x01)
+        {
+            decode->secret_file_ext_size = decode->secret_file_ext_size | mask;
+        }
+        mask >>=1 ;
+    }
+    return e_success;
+}
+
+Status decode_secret_ext(DecodeInfo *decode)
+{
+    for(int i=0;i<decode->secret_file_ext_size;i++)
+    {
+        fread(decode->image_data,sizeof(char),MAX_IMAGE_BUFF_SIZE,decode->fptr_stego);
+        decode->secret_file_ext[i]=decode_from_lsb(decode->image_data);
+    }
+    return e_success;
 }
 
 unsigned char decode_from_lsb(char *image)
