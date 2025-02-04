@@ -20,8 +20,8 @@ Status open_output_files(DecodeInfo *decode)
 {
     if(decode->output_file_name == NULL)
     {
-        printf("output file name not given . setting the file name as 'stegout' \n");
-        decode->output_file_name = "stegoout";
+        printf("INFO: Output file name not given, setting the file name as 'stegout' \n");
+        decode->output_file_name = "stegout";
         // strcat(decode->output_file_name,decode->secret_file_ext);
     }
     asprintf(&decode->output_file_name, "%s%s",decode->output_file_name,decode->secret_file_ext);
@@ -56,6 +56,12 @@ Status read_and_validate_decode_args(int argc,char **argv,DecodeInfo *decode)
             }
         }
     }
+    else
+    {
+        printf("./lsb_steg: Decoding: ./lsb_steg -d <.bmpfile> [output file]");
+        return e_failure;
+    }
+    
     if(argc == 4)
     {
         if(strstr(argv[3],"."))

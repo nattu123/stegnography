@@ -7,6 +7,12 @@ int main(int argc,char **argv)
 {
     if (argc <=5)
     {
+        if(argc ==1)
+        {
+            printf("./lsb_steg: Encoding: ./lsb_steg -e <.bmp file> <.txt file> [output file]\n");
+            printf("./lsb_steg: Decoding: ./lsb_steg -d <.bmp file> [output file]\n");
+            return e_failure;
+        }
         if(check_operation_type(argv) == e_encode)
         {
             EncodeInfo encodeinfo;
@@ -20,12 +26,12 @@ int main(int argc,char **argv)
                 fclose(encodeinfo.fptr_src_img);
                 fclose(encodeinfo.fptr_secret);
                 fclose(encodeinfo.fptr_stego);
-                printf("Encoding completed \n");
+                printf("## Encoding completed ##\n");
             }
             else 
             {
-                fprintf(stderr,"failed in validation of encode args\n");
-                return 1;
+                fprintf(stderr,"Failed in validation of encode args\n");
+                return e_failure;
             }
         }
         else if(check_operation_type(argv) == e_decode)

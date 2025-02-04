@@ -38,7 +38,7 @@ Status open_encode_file(EncodeInfo *encinfo)
         }
         else
         {
-            printf("\n Opened the file %s\n",encinfo->src_image_fname);
+            printf("INFO: Opened the file %s\n",encinfo->src_image_fname);
         }
         // SECRET FILE 
         encinfo->fptr_secret = fopen(encinfo->secret_fname,"rb");
@@ -50,7 +50,7 @@ Status open_encode_file(EncodeInfo *encinfo)
         }
         else
         {
-            printf("opened %s\n",encinfo->secret_fname);
+            printf("INFO: Opened the file %s\n",encinfo->secret_fname);
         }
     }
     else 
@@ -66,7 +66,7 @@ Status open_encode_file(EncodeInfo *encinfo)
         }
         else
         {
-            printf("opened output file \n");
+            printf("INFO: Opened the file %s\n",encinfo->stego_fname);
         }
     }
     return e_success;
@@ -74,6 +74,11 @@ Status open_encode_file(EncodeInfo *encinfo)
 
 Status read_and_validate_encode_args(int argc,char **argv,EncodeInfo *encodeinfo)
 {
+        if(argc <4 )    
+        {
+            printf("./lsb_steg: Encoding: ./lsb_steg -e <.bmp file> <.txt file> [output file]\n");
+            return e_failure;
+        }
     
         if(strstr(argv[2],".") && strcmp(strstr(argv[2],"."),".bmp")==0)
         {
@@ -89,15 +94,22 @@ Status read_and_validate_encode_args(int argc,char **argv,EncodeInfo *encodeinfo
         if(p) strcpy(encodeinfo->ext_secret_file,p);
         encodeinfo->secret_fname = argv[3];
     
-
-        if(strstr(argv[4],".") && strcmp(strstr(argv[4],"."),".bmp")==0)
+        if(argv[4]!=NULL)
         {
-            encodeinfo->stego_fname =argv[4];
+            if(strstr(argv[4],".") && strcmp(strstr(argv[4],"."),".bmp")==0)
+            {
+                encodeinfo->stego_fname =argv[4];
+            }
+            else 
+            {
+                printf("\n Output image should be in .bmp format\n");
+                return e_failure;
+            }
         }
         else 
         {
-            printf("\n Output image should be in .bmp format\n");
-            return e_failure;
+            printf("INFO: Output file not mentioned. Creating steged_img.bmp as default\n");
+            encodeinfo->stego_fname = "steged_img.bmp";
         }
     return e_success;
 
@@ -105,11 +117,11 @@ Status read_and_validate_encode_args(int argc,char **argv,EncodeInfo *encodeinfo
 
 Status do_encoding(EncodeInfo *encodeinfo)
 {
-    printf("Opening input file \n");
+    printf("INFO: Opening input file \n");
     if(open_encode_file(encodeinfo)==e_success)
     {
-        printf("## Encoding started \n");
-        printf(" Getting the file size of secret file : \n ");
+        printf("\n## Encoding started ##\n");
+        printf("INFO: Getting the file size of secret file \n");
         encodeinfo->size_secret_file = get_secret_file_size(encodeinfo->fptr_secret);
         if(encodeinfo->size_secret_file)
         {
@@ -118,8 +130,8 @@ Status do_encoding(EncodeInfo *encodeinfo)
             encodeinfo->image_capacity =  get_image_size_for_bmp(encodeinfo->fptr_src_img);
             if(check_capacity(encodeinfo)==e_success)
             {
-                printf("Capacity of %s is enough to store %s",encodeinfo->src_image_fname,encodeinfo->secret_fname);
-                printf(" opening output file : \n");
+                printf("INFO: Capacity of %s is enough to store %s\n",encodeinfo->src_image_fname,encodeinfo->secret_fname);
+                printf("INFO: Opening output file  \n");
                 if(open_encode_file(encodeinfo)==e_failure)
                 {
                     fprintf(stderr,"Error in opening output file \n");
@@ -127,34 +139,34 @@ Status do_encoding(EncodeInfo *encodeinfo)
                 }
 
                 /// copying image header 
-                printf("INFO : copying imahge header \n");
+                printf("INFO : copying image header \n");
                 if(copy_bmp_header(encodeinfo->fptr_src_img,encodeinfo->fptr_stego))
                 {
                     printf("INFO : COPIED BMP HEADDER \n");
-                    printf("Encoding Magic string\n");
+                    printf("INFO : Encoding Magic string\n");
                     if(encode_magic_string(encodeinfo)==e_success)
                     {
-                        printf("Magic string encoded \n");
-                        printf("Encoding secret file extension \n");
+                        printf("INFO : Magic string encoded \n");
+                        printf("INFO : Encoding secret file extension \n");
                         if(encode_secret_file_extn_size(encodeinfo)==e_success)
                         {
-                            printf(" sectret file extension size encoded\n");
-                            printf("encodinng secret file extension \n");
+                            printf("INFO: Secret file extension size encoded\n");
+                            printf("INFO: Encoding secret file extension \n");
                             if(encode_secret_file_extn(encodeinfo)==e_success)
                             {
-                                printf("encoded secret file extension \n");
-                                printf("encoding secret file size \n");
+                                printf("INFO: Encoded secret file extension \n");
+                                printf("INFO: Encoding secret file size \n");
                                 if(encode_secret_file_size(encodeinfo)==e_success)
                                 {
-                                    printf("Encoded secret file size\n");
-                                    printf("encoding secret file \n");
+                                    printf("INFO: Encoded secret file size\n");
+                                    printf("INFO: Encoding secret file \n");
                                     if(encode_secret_file(encodeinfo)==e_success)
                                     {
-                                        printf("Encoded secret file \n");
-                                        printf("copying remaining data \n");
+                                        printf("INFO: Encoded secret file \n");
+                                        printf("INFO: Copying remaining data \n");
                                         if(copy_remaining_data(encodeinfo)==e_success)
                                         {
-                                            printf("copied remaining data \n");
+                                            printf("INFO: Copied remaining data \n");
                                         }
 
                                     }
@@ -219,7 +231,6 @@ Status encode_magic_string(EncodeInfo *encodeinfo)
         }
 
     }
-    printf("lsb encoding of magic string completed\n");
     return e_success;
 }
 
