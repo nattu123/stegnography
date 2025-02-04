@@ -22,12 +22,12 @@ Status open_output_files(DecodeInfo *decode)
     {
         printf("output file name not given . setting the file name as 'stegout' \n");
         decode->output_file_name = "stegoout";
-        printf("\n\n %s  %s \n\n\n",decode->output_file_name,decode->secret_file_ext);
         // strcat(decode->output_file_name,decode->secret_file_ext);
     }
     asprintf(&decode->output_file_name, "%s%s",decode->output_file_name,decode->secret_file_ext);
+    printf("\n\n%s\n\n\n",decode->output_file_name);
     decode->fptr_output = fopen(decode->output_file_name,"wb");
-    if(decode->fptr_output = NULL)
+    if(decode->fptr_output == NULL)
     {
         perror("fopen : ");
         fprintf(stderr,"cannot open file %s \n",decode->output_file_name);
@@ -108,6 +108,7 @@ Status do_decoding(DecodeInfo *decode)
                             if(decode_secret_file(decode)==e_success)
                             {
                                 printf("\ndecoded secret file\n");
+                                return e_success;
                             }
                         }
                     }
@@ -120,6 +121,7 @@ Status do_decoding(DecodeInfo *decode)
         
         
     }
+    return e_failure;
 }
 
 Status decode_magic_string(DecodeInfo *decode)
@@ -190,11 +192,11 @@ Status decode_secret_file(DecodeInfo *decode)
         fread(decode->image_data,sizeof(char),MAX_IMAGE_BUFF_SIZE,decode->fptr_stego);
         if(ferror(decode->fptr_stego))
         {
-            printf("\n\nesdfsgfsgsd\n\n");
+            printf("error reading the src image \n");
         }
-        printf("\n--%d--\n",ftell(decode->fptr_stego));
         ch = decode_from_lsb(decode->image_data);
         printf("%c",ch);
+        fputc(ch,decode->fptr_output);
     }
     return e_success;
 }
@@ -213,7 +215,7 @@ unsigned char decode_from_lsb(char *image)
         {
             ch = ch & (~mask);
         }
-        mask >>=1 ;
+        mask >>=1;
     }
     return ch;
 }

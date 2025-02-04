@@ -17,7 +17,7 @@ typedef struct
     char *secret_fname;
     char ext_secret_file[max_file_suffix];
     FILE *fptr_secret;
-    long size_secret_file;
+    uint size_secret_file;
     char secret_data[MAX_SECRET_BUFF_SIZE];
 
     //OUTPUT FILE INFO 
@@ -30,7 +30,7 @@ typedef struct
 OperationType check_operation_type(char **argv); // to check whether to encode or decode
 Status read_and_validate_encode_args(int argc,char **argv,EncodeInfo *encodeinfo); 
 Status do_encoding(EncodeInfo *encodeinfo);
-long get_secret_file_size(FILE *fptr);
+uint get_secret_file_size(FILE *fptr);
 Status check_capacity(EncodeInfo *encInfo); // check capacity
 uint get_image_size_for_bmp(FILE *fptr_image); // image size of the bmp
 Status copy_bmp_header(FILE *fptr_src_image,FILE *fptr_stego);

@@ -11,9 +11,9 @@ OperationType check_operation_type(char **argv)
     else                                return e_unsupported;
 }
 
-long get_secret_file_size(FILE *fptr)
+uint get_secret_file_size(FILE *fptr)
 {
-  long size;
+  uint size;
   fseek(fptr,0,SEEK_END);
   size = ftell(fptr);
   rewind(fptr);
@@ -251,7 +251,7 @@ Status encode_secret_file_size(EncodeInfo *encodeinfo)
 {
     uint mask = 0x80000000;
     char ch[1];
-    for(int i=0;i<MAX_IMAGE_BUFF_SIZE*sizeof(long);i++)
+    for(int i=0;i<MAX_IMAGE_BUFF_SIZE*sizeof(int);i++)
     {
         fread(ch,sizeof(char),1,encodeinfo->fptr_src_img);
         if(mask & encodeinfo->size_secret_file)
