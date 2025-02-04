@@ -11,12 +11,13 @@ typedef struct
     FILE *fptr_stego;
     char image_data[MAX_IMAGE_BUFF_SIZE];
 
-    // output image  
+    // output file 
     char *output_file_name;
     FILE *fptr_output;
     char magic_string[3];
     unsigned int secret_file_ext_size;
     char secret_file_ext[5];
+    unsigned int secret_file_size;
 
 }DecodeInfo;
 
@@ -27,5 +28,8 @@ Status decode_magic_string(DecodeInfo *decode);
 unsigned char decode_from_lsb(char *image);
 Status decode_secret_ext_size(DecodeInfo *decode);
 Status decode_secret_ext(DecodeInfo *decode);
+Status decode_secret_file_size(DecodeInfo *decode);
+Status decode_secret_file(DecodeInfo *decode);
+Status open_output_files(DecodeInfo *decode);
 
 #endif 

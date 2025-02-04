@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include "common.h"
 #include "decode.h"
 #include "types.h"
@@ -13,6 +14,26 @@ Status open_stego_file(DecodeInfo *decode)
         return e_failure;
     }
     return e_success;
+}
+
+Status open_output_files(DecodeInfo *decode)
+{
+    if(decode->output_file_name == NULL)
+    {
+        printf("output file name not given . setting the file name as 'stegout' \n");
+        decode->output_file_name = "stegoout";
+        printf("\n\n %s  %s \n\n\n",decode->output_file_name,decode->secret_file_ext);
+        // strcat(decode->output_file_name,decode->secret_file_ext);
+    }
+    asprintf(&decode->output_file_name, "%s%s",decode->output_file_name,decode->secret_file_ext);
+    decode->fptr_output = fopen(decode->output_file_name,"wb");
+    if(decode->fptr_output = NULL)
+    {
+        perror("fopen : ");
+        fprintf(stderr,"cannot open file %s \n",decode->output_file_name);
+        return e_failure;
+    }
+    return e_success ;
 }
 
 Status read_and_validate_decode_args(int argc,char **argv,DecodeInfo *decode)
@@ -37,16 +58,19 @@ Status read_and_validate_decode_args(int argc,char **argv,DecodeInfo *decode)
     }
     if(argc == 4)
     {
-        char *ext;
-        if(ext = strstr(argv[3],"."))
+        if(strstr(argv[3],"."))
         {
-            decode->output_file_name = argv[3];
+            printf("no . is allowed extension will be obtained from secret file");
+            return e_failure;
         }
         else
         {
-            printf("enter a valid extension \n");
-            return e_failure;
+            decode->output_file_name = argv[3];
         }
+    }
+    else
+    {
+        decode->output_file_name = NULL;
     }
     return e_success;
 }
@@ -71,6 +95,23 @@ Status do_decoding(DecodeInfo *decode)
                 if(decode_secret_ext(decode)==e_success)
                 {
                     printf("decoded secret file exxtension \n");
+                    printf("decodinng secret file size \n");
+                    if(decode_secret_file_size(decode)==e_success)
+                    {
+                        printf("decoded ssecrte file size \n");
+                        printf("required data for decoding  obtained \n");
+                        printf("opening output file \n");
+                        if(open_output_files(decode)==e_success)
+                        {
+                            printf("opened op file  %s\n",decode->output_file_name);
+                            printf("decoding secret file ");
+                            if(decode_secret_file(decode)==e_success)
+                            {
+                                printf("\ndecoded secret file\n");
+                            }
+                        }
+                    }
+            
                 }
                 
             }
@@ -118,6 +159,42 @@ Status decode_secret_ext(DecodeInfo *decode)
     {
         fread(decode->image_data,sizeof(char),MAX_IMAGE_BUFF_SIZE,decode->fptr_stego);
         decode->secret_file_ext[i]=decode_from_lsb(decode->image_data);
+    }
+    return e_success;
+}
+
+Status decode_secret_file_size(DecodeInfo *decode)
+{
+    unsigned int mask = 0x80000000;
+    unsigned char ch[1];
+    decode->secret_file_size = 0;
+    for(int i=0;i<MAX_IMAGE_BUFF_SIZE*sizeof(int);i++)
+    {
+        fread(ch,1,1,decode->fptr_stego);
+        if(ch[0]& 0x01)
+        {
+            decode->secret_file_size = decode->secret_file_size |mask;
+        }
+        mask >>=1;
+    }
+    return e_success;
+}
+
+Status decode_secret_file(DecodeInfo *decode)
+{
+    printf("inside decode secret file \n\n\n");
+    char ch;
+    printf("\nsecret file siize = %d\n",decode->secret_file_size);
+    for(int i =0;i<decode->secret_file_size;i++)
+    {
+        fread(decode->image_data,sizeof(char),MAX_IMAGE_BUFF_SIZE,decode->fptr_stego);
+        if(ferror(decode->fptr_stego))
+        {
+            printf("\n\nesdfsgfsgsd\n\n");
+        }
+        printf("\n--%d--\n",ftell(decode->fptr_stego));
+        ch = decode_from_lsb(decode->image_data);
+        printf("%c",ch);
     }
     return e_success;
 }
