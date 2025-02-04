@@ -58,6 +58,54 @@ Status do_decoding(DecodeInfo *decode)
     if(open_stego_file(decode)==e_success)
     {
         printf("opened stego file ");
+        fseek(decode->fptr_stego,54,SEEK_SET);
+        printf("decoding magic string\n");
+        if(decode_magic_string(decode)==e_success)
+        {
+            printf("magic string decoded \n");
+            printf("starting decode of file extension :\n" );
+            
+        
+        }
+        
         
     }
+}
+
+Status decode_magic_string(DecodeInfo *decode)
+{
+    int i=0;
+    for(i=0;i<2;i++)
+    {
+        fread(decode->image_data,sizeof(char),MAX_IMAGE_BUFF_SIZE,decode->fptr_stego);
+        decode->magic_string[i] = decode_from_lsb(decode->image_data);
+    }
+    decode->magic_string[i]= '\0';
+
+    if(strcmp(decode->magic_string,MAGIC_STRING)==0) return e_success;
+    else return e_failure;
+}
+
+Status decode_secret_ext_size(DecodeInfo *decode)
+{
+    
+}
+
+unsigned char decode_from_lsb(char *image)
+{
+    unsigned int mask =  0x80;
+    unsigned char ch;
+    for(int i=0;i<MAX_IMAGE_BUFF_SIZE;i++)
+    {
+        if( image[i] & 0x01)    
+        {
+            ch = ch | mask;
+        }
+        else
+        {
+            ch = ch & (~mask);
+        }
+        mask >>=1 ;
+    }
+    return ch;
 }
