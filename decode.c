@@ -66,7 +66,7 @@ Status read_and_validate_decode_args(int argc,char **argv,DecodeInfo *decode)
     {
         if(strstr(argv[3],"."))
         {
-            printf("no . is allowed extension will be obtained from secret file");
+            printf("no  '.'  is allowed extension will be obtained from secret file");
             return e_failure;
         }
         else
@@ -83,37 +83,37 @@ Status read_and_validate_decode_args(int argc,char **argv,DecodeInfo *decode)
 
 Status do_decoding(DecodeInfo *decode)
 {
-    printf("## Deocding started \n");
-    printf("Opening stego file \n");
+    printf("## Decoding started \n");
+    printf("INFO: Opening stego file \n");
     if(open_stego_file(decode)==e_success)
     {
-        printf("opened stego file ");
+        printf("INFO: Opened stego file ");
         fseek(decode->fptr_stego,54,SEEK_SET);
-        printf("decoding magic string\n");
+        printf("INFO: Decoding magic string\n");
         if(decode_magic_string(decode)==e_success)
         {
-            printf("magic string decoded \n");
-            printf("starting decode of file extension :\n" );
+            printf("INFO: Magic string decoded \n");
+            printf("INFO: Starting decode of file extension :\n" );
             if(decode_secret_ext_size(decode)==e_success)
             {
-                printf("extension decoded \n");
-                printf("starting decoding of secret file \n");
+                printf("INFO: Extension decoded \n");
+                printf("INFO: Starting decoding of secret file \n");
                 if(decode_secret_ext(decode)==e_success)
                 {
-                    printf("decoded secret file exxtension \n");
-                    printf("decodinng secret file size \n");
+                    printf("INFO: Decoded secret file exxtension \n");
+                    printf("INFO: Decoding secret file size \n");
                     if(decode_secret_file_size(decode)==e_success)
                     {
-                        printf("decoded ssecrte file size \n");
-                        printf("required data for decoding  obtained \n");
-                        printf("opening output file \n");
+                        printf("INFO: Decoded ssecrte file size \n");
+                        printf("INFO: Required data for decoding  obtained \n");
+                        printf("INFO: Opening output file \n");
                         if(open_output_files(decode)==e_success)
                         {
-                            printf("opened op file  %s\n",decode->output_file_name);
-                            printf("decoding secret file ");
+                            printf("INFO: Opened op file  %s\n",decode->output_file_name);
+                            printf("INFO: Decoding secret file\n");
                             if(decode_secret_file(decode)==e_success)
                             {
-                                printf("\ndecoded secret file\n");
+                                printf("INFO: Decoded secret file\n");
                                 return e_success;
                             }
                         }
@@ -192,7 +192,7 @@ Status decode_secret_file(DecodeInfo *decode)
 {
     printf("inside decode secret file \n\n\n");
     char ch;
-    printf("\nsecret file siize = %d\n",decode->secret_file_size);
+    printf("\nsecret file size = %d\n",decode->secret_file_size);
     for(int i =0;i<decode->secret_file_size;i++)
     {
         fread(decode->image_data,sizeof(char),MAX_IMAGE_BUFF_SIZE,decode->fptr_stego);
@@ -201,7 +201,6 @@ Status decode_secret_file(DecodeInfo *decode)
             printf("error reading the src image \n");
         }
         ch = decode_from_lsb(decode->image_data);
-        printf("%c",ch);
         fputc(ch,decode->fptr_output);
     }
     return e_success;
