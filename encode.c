@@ -93,6 +93,19 @@ Status read_and_validate_encode_args(int argc,char **argv,EncodeInfo *encodeinfo
         char *p = strstr(argv[3],".");
         if(p) strcpy(encodeinfo->ext_secret_file,p);
         encodeinfo->secret_fname = argv[3];
+
+        // validate extensions 
+        char str [3][5] = {".txt",".c",".sh"};
+        int flag = 0;
+        for(int i =0;i<3;i++)
+        {
+            if(strcmp(encodeinfo->ext_secret_file,str[i])==0) flag++;
+        }
+            if(!flag)
+            {
+                printf("not a valid extension ");
+                return e_failure;
+            }
     
         if(argv[4]!=NULL)
         {
